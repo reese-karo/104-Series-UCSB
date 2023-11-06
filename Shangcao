@@ -1,0 +1,77 @@
+Newtons Method code
+
+
+
+import numpy as np
+
+def van_der_waals(V, P, T, a, b, n, R=0.0821):
+    """
+    Computes the van der Waals equation adjusted to zero.
+    """
+    a_converted = a * 0.9869  # Convert a from bar L^2/mol^2 to atm L^2/mol^2
+    return P * V**3 - (P * n * b + n * R * T) * V**2 + a_converted * n**2 * V - a_converted * n**3 * b
+
+def derivative_van(V, P, T, a, b, n, R=0.0821):
+    """
+    Computes the derivative of the van der Waals equation with respect to V.
+    """
+    a_converted = a * 0.9869
+    return 3 * P * V**2 - 2 * (P * n * b + n * R * T) * V + a_converted * n**2
+
+def newtons_method(f, f_prime, x0, tol=1e-8, max_iterations=100, verbose=False):
+    """
+    Applies Newton's method to find the root of the equation f(x) = 0.
+    """
+    x = x0
+    converged = False
+
+    for i in range(max_iterations):
+        fx = f(x)
+        fpx = f_prime(x)
+
+        # Check if derivative is zero
+        if fpx == 0:
+            raise ValueError(f"Derivative is zero at x = {x}.")
+        
+        # Update x
+        x_new = x - fx / fpx
+
+        # Check convergence criteria
+        if np.abs(f(x_new)) < tol and np.abs(x_new - x) / np.abs(x) < tol:
+            converged = True
+            x = x_new
+            break
+
+        x = x_new
+
+        if verbose:
+            print(f"Iteration {i}: x = {x}, f(x) = {fx}")
+
+    # Final convergence check
+    if not converged:
+        print("Warning: Newton's method did not converge after the maximum number of iterations.")
+    
+    return x, i + 1, converged
+
+# Parameters for finding the volume using van der Waals equation
+P = 50  # Pressure in atm
+T = 273  # Temperature in Kelvin
+a = 1.355  # Attraction parameter in bar L^2/mol^2
+b = 0.03201  # Volume correction in L/mol
+n = 5  # Number of moles
+
+# Initial guess for V (in L).
+x0 = 1.0
+
+# Define the function and its derivative
+f = lambda V: van_der_waals(V, P=P, T=T, a=a, b=b, n=n)
+f_prime = lambda V: derivative_van(V, P=P, T=T, a=a, b=b, n=n)
+
+# Apply Newton's method
+root, iterations, has_converged = newtons_method(f=f, f_prime=f_prime, x0=x0, verbose=True)
+
+# Output the results
+if has_converged:
+    print(f"Newton's Method converged: {root} L after {iterations} iterations.")
+else:
+    print(f"Newton's Method did not converge after {iterations} iterations.")
