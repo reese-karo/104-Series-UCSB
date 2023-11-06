@@ -75,3 +75,12 @@ if has_converged:
     print(f"Newton's Method converged: {root} L after {iterations} iterations.")
 else:
     print(f"Newton's Method did not converge after {iterations} iterations.")
+
+
+
+
+Secant method
+
+
+
+
