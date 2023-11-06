@@ -146,3 +146,52 @@ else:
     print(f"The Secant Method did not converge after {result['iterations']} iterations.")
 
 
+
+
+
+
+
+
+Newone
+
+import numpy as np
+import time
+
+# Define your function and its derivative
+def f(x):
+    return x**2 - 2
+
+def df(x):
+    return 2*x
+
+# Newton's Method
+def newtons_method(f, df, x0, tol=1e-8, max_iterations=100):
+    start_time = time.time()
+    for i in range(max_iterations):
+        x1 = x0 - f(x0)/df(x0)
+        if np.abs(x1 - x0) < tol:
+            return x1, i+1, time.time() - start_time
+        x0 = x1
+    return x0, max_iterations, time.time() - start_time
+
+# Secant Method
+def secant_method(f, x0, x1, tol=1e-8, max_iterations=100):
+    start_time = time.time()
+    for i in range(max_iterations):
+        x2 = x1 - f(x1) * ((x1 - x0) / (f(x1) - f(x0)))
+        if np.abs(x2 - x1) < tol:
+            return x2, i+1, time.time() - start_time
+        x0, x1 = x1, x2
+    return x1, max_iterations, time.time() - start_time
+
+# Run both methods
+newton_root, newton_iters, newton_time = newtons_method(f, df, x0=1)
+secant_root, secant_iters, secant_time = secant_method(f, x0=1, x1=2)
+
+# Compare results
+print(f"Newton's Method: Root = {newton_root}, Iterations = {newton_iters}, Time = {newton_time} seconds")
+print(f"Secant Method: Root = {secant_root}, Iterations = {secant_iters}, Time = {secant_time} seconds")
+
+# Vary initial conditions and repeat the comparison
+
+
