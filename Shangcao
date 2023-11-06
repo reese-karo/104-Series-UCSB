@@ -75,3 +75,74 @@ if has_converged:
     print(f"Newton's Method converged: {root} L after {iterations} iterations.")
 else:
     print(f"Newton's Method did not converge after {iterations} iterations.")
+
+
+
+
+Secant method
+
+
+import numpy as np
+
+def secant_method(f, x0, x1, tol, max_iterations, verbose=False):
+    '''
+    Uses the Secant method to find a root of a function.
+    
+    Parameters:
+    - f: The function for which to find the root.
+    - x0, x1: The initial two guesses for the root.
+    - tol: The tolerance for the convergence of the method.
+    - max_iterations: The maximum number of iterations to perform.
+    - verbose: Whether to print the process (default: False).
+    
+    Returns:
+    - A dictionary with the root, the number of iterations, and a flag indicating convergence.
+    '''
+    
+    if tol <= 0:
+        raise ValueError("Tolerance must be positive.")
+    
+    for i in range(max_iterations):
+        f_x0 = f(x0)
+        f_x1 = f(x1)
+        denominator = (f_x1 - f_x0)
+        
+        # Avoid division by zero
+        if denominator == 0:
+            print("Warning: Division by zero encountered in the Secant method.")
+            return {"root": None, "iterations": i, "converged": False}
+
+        x_new = x1 - (f_x1 * (x1 - x0) / denominator)
+        
+        if verbose:
+            print(f"Iteration {i+1}: x = {x_new}, f(x) = {f(x_new)}")
+        
+        if np.abs(x_new - x1) < tol:
+            return {"root": x_new, "iterations": i + 1, "converged": True}
+        
+        x0, x1 = x1, x_new
+        
+    return {"root": x1, "iterations": max_iterations, "converged": False}
+
+# Parameters for finding the root using the van der Waals equation
+x0, x1 = -3, 3
+P = 50
+T = 273
+a = 1.355
+b = 0.03201
+n = 5
+R = 0.0821
+
+# Define the function using the van der Waals equation
+f = lambda V: van_der_waals(V, P=P, T=T, a=a, b=b, n=n, R=R)
+
+# Apply the Secant method
+result = secant_method(f, x0=x0, x1=x1, tol=1e-8, max_iterations=30, verbose=True)
+
+# Output the results
+if result["converged"]:
+    print(f"The Secant Method converged: {result['root']} after {result['iterations']} iterations.")
+else:
+    print(f"The Secant Method did not converge after {result['iterations']} iterations.")
+
+
