@@ -152,7 +152,7 @@ else:
 
 
 
-Newone
+#Newone
 
 import numpy as np
 import time
@@ -198,7 +198,7 @@ print(f"Secant Method: Root = {secant_root}, Iterations = {secant_iters}, Time =
 
 
 
-Compare Newton and Secant 
+#Compare Newton and Secant 
 
 import numpy as np
 import time
