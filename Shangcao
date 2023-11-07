@@ -195,3 +195,77 @@ print(f"Secant Method: Root = {secant_root}, Iterations = {secant_iters}, Time =
 # Vary initial conditions and repeat the comparison
 
 
+
+
+
+Compare Newton and Secant 
+
+import numpy as np
+import time
+
+# Assume we already have the functions defined for Newton's method and Secant method,
+# as well as the function f(x) and its derivative df(x) we are finding roots for.
+
+# True root for comparison
+true_root = # Known root or a root calculated to high precision
+
+# Prepare for comparisons
+tolerance = 1e-8
+max_iterations = 100
+
+# Record the performance
+newton_performance = {
+    "iterations": None,
+    "time": None,
+    "accuracy": None,
+}
+
+secant_performance = {
+    "iterations": None,
+    "time": None,
+    "accuracy": None,
+}
+
+# Run Newton's Method
+start_time = time.time()
+newton_root, newton_iters = newtons_method(f, df, x0=1, tol=tolerance, max_iterations=max_iterations)
+newton_performance["time"] = time.time() - start_time
+newton_performance["iterations"] = newton_iters
+newton_performance["accuracy"] = np.abs(newton_root - true_root)
+
+# Run Secant Method
+start_time = time.time()
+secant_root, secant_iters = secant_method(f, x0=1, x1=2, tol=tolerance, max_iterations=max_iterations)
+secant_performance["time"] = time.time() - start_time
+secant_performance["iterations"] = secant_iters
+secant_performance["accuracy"] = np.abs(secant_root - true_root)
+
+# Print comparisons
+print("Newton's Method:")
+print(f"Iterations: {newton_performance['iterations']}")
+print(f"Time: {newton_performance['time']} seconds")
+print(f"Accuracy: {newton_performance['accuracy']}")
+
+print("\nSecant Method:")
+print(f"Iterations: {secant_performance['iterations']}")
+print(f"Time: {secant_performance['time']} seconds")
+print(f"Accuracy: {secant_performance['accuracy']}")
+
+# Decide which method performed better
+if newton_performance["time"] < secant_performance["time"]:
+    print("\nNewton's Method is faster.")
+else:
+    print("\nSecant Method is faster.")
+
+if newton_performance["iterations"] < secant_performance["iterations"]:
+    print("Newton's Method converges in fewer iterations.")
+else:
+    print("Secant Method converges in fewer iterations.")
+
+if newton_performance["accuracy"] < secant_performance["accuracy"]:
+    print("Newton's Method is more accurate.")
+else:
+    print("Secant Method is more accurate.")
+
+
+
