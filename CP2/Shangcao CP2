@@ -82,3 +82,111 @@ approx_temps_backward, approx_temps_forward
 
 
 
+
+Adams-Bashforth and Adams-Moulton change
+
+def RK4_step(func, y0, K, M, h):
+    """
+    Perform a single step of the Runge-Kutta 4th order method.
+
+    Parameters:
+    y0 (float): Initial value.
+    K, M (float): Parameters of the function.
+    h (float): Step size.
+
+    Returns:
+    float: Next value after a single RK4 step.
+    """
+    k1 = h * func(y0, K, M)
+    k2 = h * func(y0 + 0.5 * k1, K, M)
+    k3 = h * func(y0 + 0.5 * k2, K, M)
+    k4 = h * func(y0 + k3, K, M)
+    return y0 + (k1 + 2*k2 + 2*k3 + k4) / 6
+
+def AB3(func, T0, M, K, TT, h):
+    """
+    Adams-Bashforth of order 3 method.
+
+    Parameters:
+    func (callable): Function representing the differential equation (dy/dt = func(y, K, M)).
+    T0 (float): Initial value.
+    M, K (float): Parameters of the function.
+    TT (float): End time.
+    h (float): Step size.
+
+    Returns:
+    np.ndarray: Array of values approximating the solution at each step.
+    """
+    if h <= 0 or TT <= 0:
+        raise ValueError("Time step h and final time TT must be positive")
+
+    num_steps = int(TT / h)
+    if num_steps < 3:
+        raise ValueError("Number of steps must be at least 3 for AB3 method")
+
+    x = np.zeros(num_steps)
+    x[0] = T0
+
+    # Initial steps using RK4
+    for i in range(2):
+        x[i + 1] = RK4_step(func, x[i], K, M, h)
+
+    # Adams-Bashforth steps
+    for i in range(2, num_steps - 1):
+        f1 = func(x[i], K, M)
+        f2 = func(x[i - 1], K, M)
+        f3 = func(x[i - 2], K, M)
+        x[i + 1] = x[i] + h / 12 * (23 * f1 - 16 * f2 + 5 * f3)
+
+    return x
+
+def AM4(func, T0, M, K, TT, h):
+    """
+    Adams-Moulton of order 4 solver.
+
+    Parameters:
+    func (callable): Function representing the differential equation (dy/dt = func(y, K, M)).
+    T0 (float): Initial value.
+    M, K (float): Parameters of the function.
+    TT (float): End time.
+    h (float): Step size.
+
+    Returns:
+    np.ndarray: Array of values approximating the solution at each step.
+    """
+    if h <= 0 or TT <= 0:
+        raise ValueError("Time step h and final time TT must be positive")
+
+    num_steps = int(TT / h)
+    if num_steps < 3:
+        raise ValueError("Number of steps must be at least 3 for AM4 method")
+
+    x = np.zeros(num_steps)
+    x[0] = T0
+
+    # Initial steps using RK4
+    for i in range(2):
+        x[i + 1] = RK4_step(func, x[i], K, M, h)
+
+    # Adams-Moulton steps
+    for i in range(2, num_steps - 1):
+        f = lambda y: y - x[i] - h / 24 * (9 * func(y, K, M) + 19 * func(x[i], K, M) - 5 * func(x[i-1], K, M) + func(x[i-2], K, M))
+        x[i + 1] = fsolve(f, x[i])
+
+    return x
+
+# Example usage with improved code
+T0 = 40  # Initial temperature
+M = 25   # Surrounding temperature
+K = 2    # Proportionality constant
+TT = 10  # Final time
+h = 0.01 # Time step
+
+approx_temps_ab = AB3(Newton_cool, T0, M, K, TT, h)
+approx_temps_am = AM4(Newton_cool, T0, M, K, TT, h)
+
+approx_temps_ab, approx_temps_am
+
+
+
+
