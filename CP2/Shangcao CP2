@@ -1,4 +1,4 @@
-Newtons Law of Cooling change
+# Newtons Law of Cooling change
 
 import numpy as np
 from scipy.optimize import fsolve
@@ -83,7 +83,7 @@ approx_temps_backward, approx_temps_forward
 
 
 
-Adams-Bashforth and Adams-Moulton change
+# Adams-Bashforth and Adams-Moulton change
 
 def RK4_step(func, y0, K, M, h):
     """
